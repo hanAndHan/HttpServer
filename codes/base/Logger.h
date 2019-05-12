@@ -1,4 +1,4 @@
-﻿// @Author Lin Han
+// @Author Lin Han
 // @Email  hancurrent@foxmail.com
 //单列模式封装的多缓冲区，异步日志类，用于打印日志
 #pragma once
@@ -34,11 +34,10 @@ public:
 	//static std::shared_ptr<Logger> setLogger(size_t bufSize);
 
 	/* 按格式输出日志信息到指定文件 */
-	static void logStream(const char* mesg, size_t len);
 	//static void logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFuncSig,const char* pszFmt, ...);
 	static void logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFmt, ...);
 	/*启动日志类*/
-	static bool start();
+	static bool start(bool allowLog_ = false);
 	/*终止日志类*/
 	static void stop();
 	/*设置日志文件名*/
@@ -59,6 +58,7 @@ private:
 	static Condition readableBuf;
 	/* 互斥锁 */
 	static MutexLock mutex;
+	static MutexLock mutexForGet;
 	/* 后台线程需要处理的Buffer数目 */
 	static int readableNum;
 	/* 后台线程 */
@@ -70,8 +70,11 @@ private:
 	static bool isRunningFunc;
 	/*Threadfunc函数是否执行标志位*/
 	static bool isRunningThreadFunc;
-	/*Logger是否已经启动*/
+	/*Logger是否已经启动标志位*/
 	static bool startd;
+	/*允许打印日志标志位*/
+	static bool allowLog;
+	static void setAllowLog(bool allowLog_ = true);
 	/*文件描述符*/
 	static int fd;
 	/*日志文件名*/
@@ -81,4 +84,5 @@ private:
 	/*当前时间格式化*/
 	static int timeFormate();
 };
+
 
