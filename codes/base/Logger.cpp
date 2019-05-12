@@ -1,17 +1,19 @@
-﻿// @Author Lin Han
+// @Author Lin Han
 // @Email  hancurrent@foxmail.com
 #include "Logger.h"
 MutexLock Logger::mutex;
+MutexLock Logger::mutexForGet;
 Condition Logger::readableBuf(Logger::mutex);
 Thread    Logger::readThread(Logger::Threadfunc);
 //std::shared_ptr<Logger> Logger::myLogger = nullptr;
 std::shared_ptr<Buffer> Logger::curBuf = nullptr;
 std::list<std::shared_ptr<Buffer>> Logger::bufList;
-Logger *	 Logger::myLogger             = new Logger();
+Logger *	 Logger::myLogger             = nullptr;
 int			 Logger::readableNum          = 0;
 bool		 Logger::isRunningFunc		  = true;
 bool		 Logger::isRunningThreadFunc  = true;
 bool		 Logger::startd				  = false;
+bool         Logger::allowLog			  = false;  
 int		   	 Logger::ioNumbers            = 0;
 int			 Logger::fd                   = -1;
 std::string  Logger::logFileName;
@@ -22,12 +24,15 @@ __thread char t_time[32];
 
 Logger::Logger()
 {
-	/* 创建当前Buffer */
-	curBuf = std::make_shared<Buffer>();
-	/* 创建两块备用Buffer */
-	bufList.resize(2);
-	(*bufList.begin()) = std::make_shared<Buffer>();
-	(*(++bufList.begin())) = std::make_shared<Buffer>();
+	if (curBuf == nullptr&&bufList.empty())
+	{
+		/* 创建当前Buffer */
+		curBuf = std::make_shared<Buffer>();
+		/* 创建两块备用Buffer */
+		bufList.resize(2);
+		(*bufList.begin()) = std::make_shared<Buffer>();
+		(*(++bufList.begin())) = std::make_shared<Buffer>();
+	}
 }
 Logger::~Logger()
 {
@@ -35,7 +40,12 @@ Logger::~Logger()
 }
 Logger * Logger::getLogger()
 {
-	//myLogger = std::make_shared<Logger>();
+	if (myLogger == nullptr)
+	{
+		MutexLockGuard lock(mutexForGet);
+		if (myLogger == nullptr)
+			myLogger = new Logger();
+	}
 	return myLogger;
 }
 std::shared_ptr<Buffer>& Logger::useFul()
@@ -59,34 +69,13 @@ std::shared_ptr<Buffer>& Logger::useFul()
 	}
 	return *iter;
 }
-void Logger::logStream(const char* mesg, size_t len)
-{
-	/*日志类启动了才打印日志*/
-	assert(startd);
-	/* 上锁，使用lock和condition_variable条件变量结合 */
-	MutexLockGuard lock(mutex);
-	/* 判断当前缓冲是否还写得下，写不下了则与备用缓冲交换新的 */
-	if (curBuf->avail() > len)
-	{
-		curBuf->append(mesg, int(len));
-	}
-	else
-	{
-		/* 得到一块备用缓冲 */
-		auto & useBuf = useFul();
-		/* 交换指针即可 */
-		curBuf.swap(useBuf);
-		/*写入之前写不下的数据*/
-		curBuf->append(mesg, int(len));
-		/* 可读缓冲数量增加 */
-		++readableNum;
-		/* 唤醒阻塞后台线程 */
-		readableBuf.notifyAll();
-	}
-}
+
 					             /*日志级别              文件名       行号                可变参数的宏*/
 void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFmt, ...)
 {
+	/*不允许打印日志直接退出*/
+	if (allowLog == false)
+		return;
 	/*日志类启动了才打印日志*/
 	assert(startd);
 	/*拼接打印信息*/
@@ -140,6 +129,10 @@ void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, co
 		/* 唤醒阻塞后台线程 */
 		readableBuf.notifyAll();
 	}
+}
+void Logger::setAllowLog(bool allowLog_)
+{
+	allowLog = allowLog_;
 }
 int Logger::timeFormate()
 {
@@ -221,10 +214,17 @@ void Logger::Threadfunc()
 		curBuf->setSize();
 	}
 }
-bool Logger::start()
+bool Logger::start(bool allowLog_)
 {
-	if (readThread.isStarted())
+	allowLog = allowLog_;
+	isRunningThreadFunc =  true;
+	isRunningFunc = true;
+	if (myLogger == nullptr)
+		return false;
+	if (startd)
+	{
 		return true;
+	}
 	else
 	{
 		if (logFileName.empty())
@@ -248,8 +248,12 @@ void Logger::stop()
 {
 	isRunningThreadFunc = false;
 	isRunningFunc = false;
+	startd = false;
+	allowLog = false;
+	logFileName.clear();
 	readableBuf.notify();
 	readThread.join();
+	fd = -1;
 	if (myLogger != nullptr)
 	{
 		delete myLogger;
