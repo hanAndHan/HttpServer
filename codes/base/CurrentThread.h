@@ -18,7 +18,7 @@ namespace CurrentThread
 		if (t_cachedTid == 0)
 		{
 			t_cachedTid = static_cast<pid_t>(::syscall(SYS_gettid));//获取线程唯一id
-			snprintf(t_tidString, sizeof t_tidString, "%d ", t_cachedTid);//%5d加空格，长度为6
+			snprintf(t_tidString, sizeof t_tidString, "%d ", t_cachedTid);//格式化
 		}
 	}
 
