@@ -13,7 +13,7 @@ Thread::Thread(const ThreadFunc& func, const string& n)
 
 Thread::~Thread()
 {
-	// no join
+	
 }
 
 void Thread::start()
@@ -24,7 +24,7 @@ void Thread::start()
 	if (err != 0)
 	{
 		fprintf(stderr, "pthread_create error:%s\n", strerror(err));
-		//LOG_SYSFATAL << "Failed in pthread_create";
+		exit(-1);
 	}
 }
 
