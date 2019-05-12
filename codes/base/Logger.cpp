@@ -206,7 +206,6 @@ void Logger::Threadfunc()
 	/*结束日志类时，把curBuf中最后剩下的数据写入文件*/
 	if (isRunningThreadFunc == false && curBuf->Size() > 0)
 	{
-		cout << "xixi";
 		write(fd, curBuf->Data(), curBuf->Size());
 		/* 清空缓冲 */
 		bzero(curBuf->Data(), curBuf->Capacity());
