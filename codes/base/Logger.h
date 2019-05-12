@@ -22,7 +22,7 @@
 #define LogInfo(...)        Logger::logStream("INFO",	 __FILE__, __LINE__,  __VA_ARGS__)
 #define LogWarning(...)     Logger::logStream("WARNING", __FILE__, __LINE__,  __VA_ARGS__)
 #define LogError(...)       Logger::logStream("ERROR",   __FILE__, __LINE__,  __VA_ARGS__)
-class Logger
+class Logger:noncopyable
 {
 public:
 	/*默认构造函数*/
