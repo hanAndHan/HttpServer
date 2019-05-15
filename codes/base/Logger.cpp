@@ -1,20 +1,21 @@
-﻿// @Author Lin Han
+// @Author Lin Han
 // @Email  hancurrent@foxmail.com
 #include "Logger.h"
 MutexLock Logger::mutex;
 MutexLock Logger::mutexForGet;
 Condition Logger::readableBuf(Logger::mutex);
 Thread    Logger::readThread(Logger::Threadfunc);
+//std::shared_ptr<Logger> Logger::myLogger = nullptr;
 std::shared_ptr<Buffer> Logger::curBuf = nullptr;
 std::list<std::shared_ptr<Buffer>> Logger::bufList;
-Logger *     Logger::myLogger             = nullptr;
-int	     Logger::readableNum          = 0;
-bool	     Logger::isRunningFunc	  = true;
-bool	     Logger::isRunningThreadFunc  = true;
-bool         Logger::startd		  = false;
-bool         Logger::allowLog	          = false;  
-int	     Logger::ioNumbers            = 0;
-int	     Logger::fd                   = -1;
+Logger *	 Logger::myLogger             = nullptr;
+int		 Logger::readableNum          = 0;
+bool		 Logger::isRunningFunc	      = true;
+bool		 Logger::isRunningThreadFunc  = true;
+bool		 Logger::startd		      = false;
+bool             Logger::allowLog	      = false;  
+int		 Logger::ioNumbers            = 0;
+int		 Logger::fd                   = -1;
 std::string  Logger::logFileName;
 TimeSinceGMT Logger::timeNow;
 
@@ -69,7 +70,7 @@ std::shared_ptr<Buffer>& Logger::useFul()
 	return *iter;
 }
 
-		                  /*日志级别              文件名       行号                可变参数的宏*/
+			           /*日志级别              文件名       行号                可变参数的宏*/
 void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFmt, ...)
 {
 	/*不允许打印日志直接退出*/
@@ -98,10 +99,10 @@ void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, co
 	//	pszFuncSig,
 	//	msg)); 
 
-	size_t len = static_cast<size_t>(sprintf(content, "[%s.%d][%s][%d][%s:%d][%s]\n",
+	size_t len = static_cast<size_t>(sprintf(content, "[%s][%s.%d][%d][%s:%d][%s]\n",
+		pszLevel,
 		t_time,
 		microseconds,
-		pszLevel,
 		CurrentThread::tid(),
 		pszFile,
 		lineNo,
@@ -114,8 +115,19 @@ void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, co
 	if (curBuf->avail() > len)
 	{
 		curBuf->append(content, len);
+		if (pszLevel[0] == 'F')
+		{
+			/* 得到一块备用缓冲 */
+			auto & useBuf = useFul();
+			/* 交换指针即可 */
+			curBuf.swap(useBuf);
+			/* 可读缓冲数量增加 */
+			++readableNum;
+			/* 唤醒阻塞后台线程 */
+			readableBuf.notifyAll();
+		}
 	}
-	else
+	else if(curBuf->avail() <= len)
 	{
 		/* 得到一块备用缓冲 */
 		auto & useBuf = useFul();
@@ -189,12 +201,19 @@ void Logger::func()
 		/* 将满的缓冲写到文件中 */
 		++ioNumbers;
 		write(fd, (*iter)->Data(), (*iter)->Size());
+		/*判断日志级别是否是fatal*/
+		if (*((*iter)->Data() + 1) == 'F')
+		{
+			fsync(fd);
+			abort();
+		}
 		/* 清空缓冲,这一步可以不用，只需要重置writable，下次写的时候直接覆盖之前的就可以 */
 		//bzero((*iter)->Data(), (*iter)->Capacity());
 		/* 归位readable和writable */
 		(*iter)->setSize();
 		/* 可读缓冲数量减1 */
 		--readableNum;
+		
 	}
 }
 void Logger::Threadfunc()
@@ -207,6 +226,7 @@ void Logger::Threadfunc()
 	if (isRunningThreadFunc == false && curBuf->Size() > 0)
 	{
 		write(fd, curBuf->Data(), curBuf->Size());
+		fsync(fd);//内核缓冲区的数据刷新到硬盘
 		/* 清空缓冲 */
 		bzero(curBuf->Data(), curBuf->Capacity());
 		/* 归位readable和writable */
