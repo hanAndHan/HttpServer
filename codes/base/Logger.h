@@ -22,6 +22,8 @@
 #define LogInfo(...)        Logger::logStream("INFO",	 __FILE__, __LINE__,  __VA_ARGS__)
 #define LogWarning(...)     Logger::logStream("WARNING", __FILE__, __LINE__,  __VA_ARGS__)
 #define LogError(...)       Logger::logStream("ERROR",   __FILE__, __LINE__,  __VA_ARGS__)
+#define LogFatal(...)       Logger::logStream("FATAL",   __FILE__, __LINE__,  __VA_ARGS__)
+
 class Logger:noncopyable
 {
 public:
