@@ -73,6 +73,9 @@ std::shared_ptr<Buffer>& Logger::useFul()
 			           /*日志级别              文件名       行号                可变参数的宏*/
 void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFmt, ...)
 {
+	/*没有实例化直接退出*/
+	if (myLogger == nullptr)
+		return;
 	/*不允许打印日志直接退出*/
 	if (allowLog == false)
 		return;
