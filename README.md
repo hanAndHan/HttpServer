@@ -2,13 +2,13 @@
 ## 1. 介绍
 本项目为c++11实现的Http下载服务器，支持在浏览器页面播放音频和视频，以及文件下载。
 ### 1.1 技术要点
-* 基于one loop per thread的思想实现主框架，同时使用一种one timer per loop的方式踢掉空闲连接。
-* event loop使用epoll LT模式加非阻塞I/O实现；
-* timer使用STL的multi_map实现，支持心搏时间动态变化，超时时间动态变化； 
-* 使用timerfd将定时事件融入epoll系统调用，即统一事件源；
-* 实现高效的多缓冲异步日志系统；
-* 实现自定义buffer，支持延迟关闭连接，同时使用mmap加快文件读取速度。
-* 使用线程池充分利用多核CPU，并避免线程频繁创建销毁的开销；
+* 基于one loop per thread的思想实现主框架，同时使用一种one timer per loop的方式踢掉空闲连接
+* event loop使用epoll LT模式加非阻塞I/O实现
+* timer使用STL的multi_map实现，支持心搏时间动态变化，超时时间动态变化 
+* 使用timerfd将定时事件融入epoll系统调用，即统一事件源
+* 实现高效的多缓冲异步日志系统
+* 实现自定义buffer，支持延迟关闭连接，同时使用mmap加快文件读取速度
+* 使用线程池充分利用多核CPU，并避免线程频繁创建销毁的开销
 ### 1.2 总体框架
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/framework.png)
 如图所示，前端工作线程负责处理业务，后端日志线程负责将日志信息写入文件。程序启动时，先创建好SubLoop，MainLoop，日志线程。MainLoop只负责监听是否有连接到来。当连接到来后MainLoop以一种轮叫的方式(round robin)一次性将所有处于ESTABLISHED状态的连接分发给SubLoop，同时每个SubLoop中运行着一个Timer，负责踢掉空闲连接。当前端日志buffer被写满时会与后端buffer空闲交换，由后端日志线程负责将buffer中的内容写入日志文件。
