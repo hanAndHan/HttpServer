@@ -14,8 +14,8 @@ int main(int argc, const char* argv[])
 		exit(1);
 	}
 	cout << "启动" << endl;
-	//Logger * log = Logger::getLogger();
-	//log->start();
+	Logger * log = Logger::getLogger();
+	log->start();
 
 	// ip
 	string ip = argv[1];
@@ -32,8 +32,8 @@ int main(int argc, const char* argv[])
 	//daemon(1, 1);
 	EventLoop loop;
 	Server sever(&loop, ip, port, 4);
-	sever.start(true);//false表示开启定时器剔除空闲连接
+	sever.start(false);//false关闭开启定时器剔除空闲连接
 	loop.loop();
-	//log->stop();
+	log->stop();
 	return 0;
 }
