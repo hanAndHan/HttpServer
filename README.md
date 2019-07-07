@@ -10,6 +10,9 @@
 * 实现自定义buffer，支持延迟关闭连接，同时使用mmap加快文件读取速度。
 * 使用线程池充分利用多核CPU，并避免线程频繁创建销毁的开销；
 ## 总体框架
+<a name="divtop"></a>
+[跳转指定位置](#divtop) 
+跳转指定位置 <https://github.com/hanAndHan/HttpServer/edit/master/README.md#divtop>
 
 ## Timer实现要点
 在服务器和客户端没有协商好心跳协议的情况下，使用timer踢掉空闲连接只是一种权益之计。踢掉空闲连接的方式有很多种，比如升序链表，小根堆，时间轮等，我尝试了两种方式，第一种是小根堆，第二种是红黑树。
