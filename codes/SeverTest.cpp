@@ -32,7 +32,7 @@ int main(int argc, const char* argv[])
 	//daemon(1, 1);
 	EventLoop loop;
 	Server sever(&loop, ip, port, 4);
-	sever.start(false);//false关闭开启定时器剔除空闲连接
+	sever.start(true);//true表示开启定时器剔除空闲连接功能
 	loop.loop();
 	log->stop();
 	return 0;
