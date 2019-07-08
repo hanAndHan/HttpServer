@@ -1,4 +1,8 @@
 # HttpServer
+| Part Ⅰ | Part Ⅱ | Part Ⅲ | Part Ⅳ | Part Ⅴ | Part Ⅵ |
+| :--------: | :---------: | :---------: | :---------: | :---------: | :---------: |
+| [介绍](#介绍) | [Timer](#Timer) | [日志类](#日志类) | [Buffer](#Buffer) |[压力测试](#压力测试)
+<a name="介绍"></a>
 ## 1. 介绍
 本项目为c++11实现的Http下载服务器，支持在浏览器页面播放音频和视频，以及文件下载。
 ### 1.1 技术要点
@@ -12,8 +16,7 @@
 ### 1.2 总体框架
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/framework.png)
 如图所示，前端工作线程负责处理业务，后端日志线程负责将日志信息写入文件。程序启动时，先创建好SubLoop，MainLoop，日志线程。MainLoop只负责监听是否有连接到来。当连接到来后MainLoop以一种轮叫的方式(round robin)一次性将所有处于ESTABLISHED状态的连接分发给SubLoop，同时每个SubLoop中运行着一个Timer，负责踢掉空闲连接。当前端日志buffer被写满时会与后端buffer空闲交换，由后端日志线程负责将buffer中的内容写入日志文件。
-<a name="divtop"></a>
-[跳转指定位置](#divtop) 
+<a name="Timer"></a>
 ## 2. Timer实现要点
 在服务器和客户端没有协商好心跳协议的情况下，使用timer踢掉空闲连接只是一种权益之计。踢掉空闲连接的方式有很多种，比如升序链表，小根堆，时间轮等，我尝试了两种方式，第一种是小根堆，第二种是红黑树。
 小根堆直接使用的STL的priority_queue，红黑树使用的是multi_map。主体思想是one timer per loop，即每个loop都用一个timer管理连接。
@@ -27,6 +30,7 @@
 	* 每次accept一个连接，给连接设置一个超时时间15s，将连接插入红黑树中。
 	* 每次调用心搏函数时候，循环遍历红黑树上的连接一次，将超时的连接关闭(若连接此时还在进行写操做的话，则只是把它从红黑树上摘下来，连接完成写操作后自己关闭连接)，直到遇到没有超时的连接跳出循环。将心搏间隔改为下次最早超时的连接离超时所需的时间。这样能减少心搏函数触发频率，尽量保证，下一次心搏函数执行时有连接超时。
 	* 每当有连接完成一次读操作时，重置该连接的超时时间。
+<a name="日志类"></a>
 ## 3. 日志类实现要点
 * 一个包含多个线程的进程最好只写一个文件，这样在分析日志时可以避免在多个文件中跳来跳去。
 * 工作线程：干事的线程。  
@@ -127,15 +131,17 @@ int main()
 	return 0;
 }
 ```  
-### 3.4 日志测试结果
+### 3.4 日志类测试结果
 muduo:   
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/muduoLogTest.png)  
 HttpServer:   
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/httpServerLogTest.png)  由上述结果可见HttpServer中的日志库和muduo中的日志库性能差距不大。
+<a name="Buffer"></a>
 ## 4. Buffer
 需要自定义buffer的两个原因：
 * 读数据的时候，不知道要接收的数据有多少，如果把缓冲区设计得太大会造成浪费。所以一个Buffer带有一个栈上的缓冲和堆上的缓冲，每次使用readv读取数据，先读到堆上那块缓冲再读到栈上那块缓冲，若栈上的缓冲有数据，则将其append到堆上的缓冲。栈上缓冲的大小为64KB，在一个不繁忙的系统上，程序一般等待在epoll()系统调用上，一有数据到达就会立刻唤醒应用程序来读取数据，那么每次read的数据不会超过几KB(一两个以太网frame)，陈硕在书中写到64KB缓冲足够容纳千兆网在500us内全速发送的数据。
 * 写数据的时候，若已连接套接字对应的写缓冲区装不下了，剩下的没写的数据保存在自定义buffer中，然后监听已连接套接字上面的写事件，当写事件就绪时，继续将数据写入写缓冲区。若还写不完，继续保持监听写事件，若写完了，停止监听写事件，防止出现busyloop。
+<a name="压力测试"></a>
 ## 5. 压力测试
 ## 5.1 测试环境
 * unbuntu 16.04 VMware Workstation 14 Player
