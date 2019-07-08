@@ -15,7 +15,7 @@ int main(int argc, const char* argv[])
 	}
 	cout << "启动" << endl;
 	Logger * log = Logger::getLogger();
-	log->start();
+	log->start(true);
 
 	// ip
 	string ip = argv[1];
