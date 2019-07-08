@@ -51,7 +51,7 @@
   
 `注：本日志类仅实现高效的多缓冲异步日志系统，不支持日志文件的滚动功能。`  
 ### 3.1 日志类总体流程
-前端提供一块buffer供各工作线程写入，后端预先分配两块空闲buffer，使用STL中的双端链表维护。当前端buffer满时，和后端的一块空闲buffer交换(交换的是指针，所以速度很快)。若后端没有空闲buffer则会像系统申请一块新的buffer加入双端链表中，所以，该双端链表是会动态增长的，会自己动态增长到合适的长度；当后端日志线程发现有满的后端buffer时，就开始将该满的后端buffer写入日志文件。  
+前端提供一块buffer供各工作线程写入，后端预先分配两块空闲buffer，使用STL中的双向链表维护。当前端buffer满时，和后端的一块空闲buffer交换(交换的是指针，所以速度很快)。若后端没有空闲buffer则会像系统申请一块新的buffer加入双向链表中，所以，该双向链表是会动态增长的，会自己动态增长到合适的长度；当后端日志线程发现有满的后端buffer时，就开始将该满的后端buffer写入日志文件。  
 ### 3.2 日志类测试环境
 * unbuntu 16.04 VMware Workstation 14 Player
 * 内存：2G
@@ -68,24 +68,24 @@
 using namespace std;
 using namespace muduo;
 
-FILE* g_file;
+FILE* gFile;
 
 void dummyOutput(const char* msg, int len)
 {
-	if (g_file)
+	if (gFile)
 	{
-		fwrite(msg, 1, len, g_file);
+		fwrite(msg, 1, len, gFile);
 	}
 }
 
 void dummyFlush()
 {
-	fflush(g_file);
+	fflush(gFile);
 }
 
 int main()
 {
-	g_file = ::fopen("./test.txt", "ae");
+	gFile = fopen("./test.txt", "ae");
 	
 	Logger::setOutput(dummyOutput);
 	Logger::setFlush(dummyFlush);
@@ -102,7 +102,7 @@ int main()
 	double mBytes = 500000 * 100 / 1024 / 1024;
 	double mBytesEachSecond = (mBytes / totaltime) * 1000;
 	cout <<"muduo  -"<<"Total time:" << totaltime << "ms" << "|" << "Bytes:" << mBytes << "MB" << "|" << "Rate:" << mBytesEachSecond << "MB/s" << endl;
-	::fclose(g_file);
+	fclose(gFile);
 	return 0;
 }
 ```
