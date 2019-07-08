@@ -155,7 +155,8 @@ HttpServer:
 | 服务器 | 短连接QPS | 长连接QPS | 
 | - | :-: | -: | 
 | HttpServer | 65304 | 184162 | 
-| WebServer | 61387| 174518 | 
+| WebServer | 61387| 174518 |
+
 测试截图：
 * HttpServer短连接测试  
 ![shortHttp](https://github.com/hanAndHan/HttpServer/blob/master/imge/shortConHttpSever_1.png)
