@@ -1,7 +1,7 @@
 # HttpServer
 | Part Ⅰ | Part Ⅱ | Part Ⅲ | Part Ⅳ | Part Ⅴ |
 | :--------: | :---------: | :---------: | :---------: | :---------: |
-| [介绍](#介绍) | [Timer](#Timer) | [日志类](#日志类) | [Buffer](#Buffer) |[压力测试](#压力测试)
+| [Inroduce](#介绍) | [Timer](#Timer) | [Log](#日志类) | [Buffer](#Buffer) |[Test](#压力测试)
 <a name="介绍"></a>
 ## 1. 介绍
 本项目为c++11实现的Http下载服务器，支持在浏览器页面播放音频和视频，以及文件下载。
