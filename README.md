@@ -134,7 +134,7 @@ HttpServer:
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/httpServerLogTest.png)  由上述结果可见HttpServer中的日志库和muduo中的日志库性能差距不大。
 ## 4. Buffer
 需要自定义buffer的两个原因：
-* 读数据的时候，不知道要接收的数据有多少，如果把缓冲区设计得太大会造成浪费。所以一个Buffer带有一个栈上的缓冲和堆上的缓冲，每次使用readv读取数据，先读到堆上那块缓冲再读到栈上那块缓冲，若栈上的缓冲有数据，则将其append到堆上的缓冲。栈上缓冲的大小为64KB，在一个不繁忙的系统上，程序一般等待在epoll()系统调用上，一有数据到达就会立刻唤醒应用程序来读取数据，那么每次read的数据不会超过几KB(一两个frame)，陈硕在书中写到64KB缓冲足够容纳千兆网在500us内全速发送的数据。
+* 读数据的时候，不知道要接收的数据有多少，如果把缓冲区设计得太大会造成浪费。所以一个Buffer带有一个栈上的缓冲和堆上的缓冲，每次使用readv读取数据，先读到堆上那块缓冲再读到栈上那块缓冲，若栈上的缓冲有数据，则将其append到堆上的缓冲。栈上缓冲的大小为64KB，在一个不繁忙的系统上，程序一般等待在epoll()系统调用上，一有数据到达就会立刻唤醒应用程序来读取数据，那么每次read的数据不会超过几KB(一两个以太网frame)，陈硕在书中写到64KB缓冲足够容纳千兆网在500us内全速发送的数据。
 * 写数据的时候，若已连接套接字对应的写缓冲区装不下了，剩下的没写的数据保存在自定义buffer中，然后监听已连接套接字上面的写事件，当写事件就绪时，继续将数据写入写缓冲区。若还写不完，继续保持监听写事件，若写完了，停止监听写事件，防止出现busyloop。
 ## 5. 压力测试
 ## 5.1 测试环境
@@ -152,12 +152,11 @@ HttpServer:
 * 线程池开启4线程
 * 因为发送的内容很少，为避免发送可能的延迟，关闭Nagle算法
 ## 5.3 测试结果及分析
-测试截图放在最后  
-
 | 服务器 | 短连接QPS | 长连接QPS | 
 | - | :-: | -: | 
 | HttpServer | 65304 | 184162 | 
 | WebServer | 61387| 174518 | 
+测试截图：
 * HttpServer短连接测试  
 ![shortHttp](https://github.com/hanAndHan/HttpServer/blob/master/imge/shortConHttpSever_1.png)
 * WebSever短连接测试  
@@ -166,5 +165,10 @@ HttpServer:
 ![keepHttp](https://github.com/hanAndHan/HttpServer/blob/master/imge/longConHttpSever_1.png)
 * Web长连接测试  
 ![keepWeb](https://github.com/hanAndHan/HttpServer/blob/master/imge/longConWebSever_1.png)
+## 5.4 测试结果分析
+* 由于长连接省去了频繁创建关闭连接的开销，所以长连接的qps明显高于短连接，大概3倍左右的水平。
+* HttpSever无论是长连接还是短连接都略高于WebSever，究其原因有两点：
+	* HttpSever实现了自定义buffer，每个连接新建时就初始好了一块1K大小的buffer，在写入少量数据时，避免了动态扩容的开销；而WebSever是直接使用的string作为buffer。
+	* HttpSever采用的EPOLL LT模式， 读写的时候不必等候出现EAGAIN，可以节省系统调用次数，降低延迟。而WebSever采用的是EOLL ET模式每次读写必须等到EAGAIN为止，否则会出现漏掉事件没处理的bug。
 
 
