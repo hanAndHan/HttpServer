@@ -158,5 +158,13 @@ HttpServer:
 | - | :-: | -: | 
 | HttpServer | 65304 | 184162 | 
 | WebServer | 61387| 174518 | 
+* WebServer短连接测试  
+![shortWeb](https://github.com/linyacool/WebServer/blob/master/datum/WebServer.png)
+* muduo短连接测试  
+![shortMuduo](https://github.com/linyacool/WebServer/blob/master/datum/muduo.png)
+* WebServer长连接测试  
+![keepWeb](https://github.com/linyacool/WebServer/blob/master/datum/WebServerk.png)
+* muduo长连接测试  
+![keepMuduo](https://github.com/linyacool/WebServer/blob/master/datum/muduok.png)
 
 
