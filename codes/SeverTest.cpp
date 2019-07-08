@@ -28,11 +28,9 @@ int main(int argc, const char* argv[])
 		perror("chdir error");
 		exit(1);
 	}
-	//开启守护进程
-	//daemon(1, 1);
 	EventLoop loop;
 	Server sever(&loop, ip, port, 4);
-	sever.start(true);//true表示开启定时器剔除空闲连接功能
+	sever.start(true);
 	loop.loop();
 	log->stop();
 	return 0;
