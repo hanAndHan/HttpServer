@@ -57,7 +57,7 @@
 * 内存：2G
 * APU：AMD-A4
 ### 3.3 日志类测试方式
-受测试环境限制，因此和muduo的日志库进行横向对比测试，写入50w条日志，每条日志长度100字节，统计总的写入时间和写入速度。
+受测试环境限制，因此和muduo的日志库进行横向对比测试，写入100w条日志，每条日志长度100字节，统计写入速度。
 * mudo
 测试代码：  
 ```cpp  
@@ -99,7 +99,7 @@ int main()
 	end = clock();
 	double endTime = (double)(end - start) / CLOCKS_PER_SEC;
 	double totaltime = endTime;
-	double mBytes = 500000 * 100 / 1024 / 1024;
+	double mBytes = 500000 * 100 / 1000 / 1000;
 	double mBytesEachSecond = mBytes / totaltime;
 	cout <<"muduo - "<< "Rate:" << mBytesEachSecond << "MB/s" << endl;
 	fclose(gFile);
@@ -126,7 +126,7 @@ int main()
 	end = clock();
 	double endTime	 = (double)(end - start) / CLOCKS_PER_SEC;
 	double totaltime = endTime;
-	double mBytes    = 500000 * 100 / 1024 / 1024;
+	double mBytes    = 500000 * 100 / 1000 / 1000;
 	double mBytesEachSecond = mBytes / totaltime;
 	cout << "mine - "<< "Rate:" << mBytesEachSecond << "MB/s" << endl;
 
