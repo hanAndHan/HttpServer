@@ -138,7 +138,8 @@ int main()
 muduo:   
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/muduoLogTest.png)  
 HttpServer:   
-![](https://github.com/hanAndHan/HttpServer/blob/master/imge/httpServerLogTest.png)  由上述结果可见HttpServer中的日志库和muduo中的日志库性能差距不大。
+![](https://github.com/hanAndHan/HttpServer/blob/master/imge/httpServerLogTest.png)  <br>
+由上述结果可见HttpServer中的日志库和muduo中的日志库性能差距不大。
 <a name="Buffer"></a>
 ## 4. Buffer
 需要自定义buffer的两个原因：
