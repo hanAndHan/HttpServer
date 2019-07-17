@@ -98,10 +98,10 @@ int main()
 	}
 	end = clock();
 	double endTime = (double)(end - start) / CLOCKS_PER_SEC;
-	double totaltime = endTime * 1000;
+	double totaltime = endTime;
 	double mBytes = 500000 * 100 / 1024 / 1024;
-	double mBytesEachSecond = (mBytes / totaltime) * 1000;
-	cout <<"muduo  -"<<"Total time:" << totaltime << "ms" << "|" << "Bytes:" << mBytes << "MB" << "|" << "Rate:" << mBytesEachSecond << "MB/s" << endl;
+	double mBytesEachSecond = mBytes / totaltime;
+	cout <<"muduo - "<< "Rate:" << mBytesEachSecond << "MB/s" << endl;
 	fclose(gFile);
 	return 0;
 }
@@ -125,10 +125,10 @@ int main()
 	}
 	end = clock();
 	double endTime	 = (double)(end - start) / CLOCKS_PER_SEC;
-	double totaltime = endTime * 1000;
+	double totaltime = endTime;
 	double mBytes    = 500000 * 100 / 1024 / 1024;
-	double mBytesEachSecond = (mBytes / totaltime) * 1000;
-	cout << "mine -"<< "Total time:" << totaltime << "ms" << "|" << "Bytes:" << mBytes << "MB" << "|" << "Rate:" << mBytesEachSecond << "MB/s" << endl;
+	double mBytesEachSecond = mBytes / totaltime;
+	cout << "mine - "<< "Rate:" << mBytesEachSecond << "MB/s" << endl;
 
 	Logger::stop();
 	return 0;
