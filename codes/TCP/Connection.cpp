@@ -97,7 +97,6 @@ void Connection::send()
 //shutdown用来实现延迟关闭，handleClose用于回调，或者用来实现强制关闭
 void Connection::shutdown()
 {
-	// FIXME: use compare and swap
 	if (state_ == kConnected)
 	{
 		setState(kDisconnecting);
@@ -111,7 +110,6 @@ void Connection::shutdownInLoop()
 	loop_->assertInLoopThread();
 	if (!channel_->isWriting())// 没有监听写事件才关闭
 	{
-		// we are not writing
 		setState(kDisconnected);
 		channel_->disableAll();
 		ConnectionPtr guardThis(shared_from_this());
@@ -209,11 +207,6 @@ void Connection::forceCloseInLoop()
 void Connection::connectDestroyed()   // 在server中使用
 {
 	loop_->assertInLoopThread();
-	if (state_ == kConnected)
-	{
-		setState(kDisconnected);
-		channel_->disableAll();   
-	}
 	channel_->remove(); // 本连接对应的描述符不再需要监控，从epoll中删除。
 	socket_->close();
 }
