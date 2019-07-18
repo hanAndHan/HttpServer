@@ -58,7 +58,6 @@ void Channel::handleEvent(int64_t receiveTime)
   }
   else
   {
-	  //上面的代码不管，就只认为调用了下面一句
     handleEventWithGuard(receiveTime);
   }
 }
