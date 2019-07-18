@@ -17,11 +17,6 @@ using namespace std::placeholders;
 
 class Server :noncopyable
 {
-	enum Option
-	{
-		kNoReusePort,
-		kReusePort,
-	};
 public:
 	Server(EventLoop* loop,
 		const std::string& IP,//服务器的IP
