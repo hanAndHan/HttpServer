@@ -155,5 +155,5 @@ void Server::removeConnectionInLoop(const ConnectionPtr& conn)
 	EventLoop* ioLoop = conn->getLoop();
 	// 注册的是 Connection::connectDestroyed
 	ioLoop->queueInLoop(
-		std::bind(&Connection::connectDestroyed, conn));  //先清除主线程中channel再清除epoll中channel
+		std::bind(&Connection::connectDestroyed, conn));  
 }
