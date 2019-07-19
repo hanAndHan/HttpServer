@@ -1,7 +1,7 @@
 # HttpServer
-| Part Ⅰ | Part Ⅱ | Part Ⅲ | Part Ⅳ | Part Ⅴ |
-| :--------: | :---------: | :---------: | :---------: | :---------: |
-| [Inroduce](#介绍) | [Timer](#Timer) | [Log](#日志类) | [Buffer](#Buffer) |[Test](#压力测试)
+| Part Ⅰ | Part Ⅱ | Part Ⅲ | Part Ⅳ | Part Ⅴ | Part Ⅵ |
+| :--------: | :---------: | :---------: | :---------: | :---------: | :---------: |
+| [Inroduce](#介绍) | [Timer](#Timer) | [Log](#日志类) | [Buffer](#Buffer) |[Close](#连接关闭) |[Test](#压力测试)
 
 <a name="介绍"></a>
 ## 1. 介绍
@@ -146,13 +146,24 @@ HttpServer:
 需要自定义buffer的两个原因：
 * 读数据的时候，不知道要接收的数据有多少，如果把缓冲区设计得太大会造成浪费。所以一个Buffer带有一个栈上的缓冲和堆上的缓冲，每次使用readv读取数据，先读到堆上那块缓冲再读到栈上那块缓冲，若栈上的缓冲有数据，则将其append到堆上的缓冲。栈上缓冲的大小为64KB，在一个不繁忙的系统上，程序一般等待在epoll()系统调用上，一有数据到达就会立刻唤醒应用程序来读取数据，那么每次read的数据不会超过几KB(一两个以太网frame)，陈硕在书中写到64KB缓冲足够容纳千兆网在500us内全速发送的数据。
 * 写数据的时候，若已连接套接字对应的写缓冲区装不下了，剩下的没写的数据保存在自定义buffer中，然后监听已连接套接字上面的写事件，当写事件就绪时，继续将数据写入写缓冲区。若还写不完，继续保持监听写事件，若写完了，停止监听写事件，防止出现busyloop。
+<a name="连接关闭"></a>
+## 5. 连接关闭
+这部分简要说明一个连接对象关闭的过程，每个Connection对象使用shared_ptr进行管理。
+* 连接到来时，创建一个Connection对象，使用shared_ptr管理，存入unodered_map中，引用计数为1；
+* 当连接关闭时，Channel上注册的读事件就绪，会调用Channel的handleEvent执行读回调函数void Connection::handleRead(int64_t receiveTime)
+* 在handleRead中调用handleClose，handleClose中使用了shared_from_this()，引用计数加1变为2；
+* 在handleClose中调用Server::removeConnection，然后再erase，这时候引用计数变为1，然后使用bind，引用计数又加1变为2，ioLoop->queueInLoop(std::bind(&Connection::connectDestroyed, conn))；
+* handleclose调用结束，之前shared_from_this()得到的对象析构，引用计数减1变为1；
+* handleRead调用结束；
+* connectDestroyed调用结束，引用计数减1变为0；
+* connection对象析构。
 <a name="压力测试"></a>
-## 5. 压力测试
-## 5.1 测试环境
+## 6. 压力测试
+## 6.1 测试环境
 * unbuntu 16.04 VMware Workstation 14 Player
 * 内存：4G
 * CPU：I5-8300H
-## 5.2 测试方法
+## 6.2 测试方法
 * 为了不受带宽限制，选择本地环境进行测试
 * 使用工具Webbench，开启1000客户端进程，时间为60s
 * 分别测试短连接和长连接的情况
@@ -162,7 +173,7 @@ HttpServer:
 因此我将与Linya学长的WebSever进行一个小小的对比，测试过程中关闭WebSever的所有输出及日志打印功能
 * 线程池开启4线程
 * 因为发送的内容很少，为避免发送可能的延迟，关闭Nagle算法
-## 5.3 测试结果及分析
+## 6.3 测试结果及分析
 | 服务器 | 短连接QPS | 长连接QPS | 
 | - | :-: | -: | 
 | HttpServer | 65304 | 184162 | 
@@ -177,7 +188,7 @@ HttpServer:
 ![keepHttp](https://github.com/hanAndHan/HttpServer/blob/master/imge/longConHttpSever_1.png)
 * Web长连接测试  
 ![keepWeb](https://github.com/hanAndHan/HttpServer/blob/master/imge/longConWebSever_1.png)
-## 5.4 测试结果分析
+## 6.4 测试结果分析
 * 由于长连接省去了频繁创建关闭连接的开销，所以长连接的qps明显高于短连接，大概3倍左右的水平。
 * HttpSever无论是长连接还是短连接都略高于WebSever，究其原因有两点：
 	* HttpSever实现了自定义buffer，每个连接新建时就初始好了一块1K大小的buffer，在写入少量数据时，避免了动态扩容的开销；而WebSever是直接使用的string作为buffer。
