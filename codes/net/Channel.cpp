@@ -47,23 +47,6 @@ void Channel::remove()
 //事件就绪时，调用handelEvent进行处理
 void Channel::handleEvent(int64_t receiveTime)
 {
- shared_ptr<void> guard;
-  if (tied_)
-  {
-    guard = tie_.lock();
-    if (guard)
-    {
-      handleEventWithGuard(receiveTime);
-    }
-  }
-  else
-  {
-    handleEventWithGuard(receiveTime);
-  }
-}
-
-void Channel::handleEventWithGuard(int64_t receiveTime)
-{ 
   eventHandling_ = true;
   //POLLHUP只会在写时产生，不会在读时产生
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN))
