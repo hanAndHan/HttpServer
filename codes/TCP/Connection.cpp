@@ -41,7 +41,6 @@ void Connection::connectEstablished()
 	loop_->assertInLoopThread();
 	assert(state_ == kConnecting);
 	setState(kConnected);
-	channel_->tie(shared_from_this());			//将当前的tcpconnection对象安全转换成this指针供shared_ptr使用
 	channel_->enableReading();					//注册channel的读事件到epoll，读事件就绪时，epoll会调用handleRead
 }
 
