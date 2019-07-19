@@ -60,7 +60,7 @@ class Channel : noncopyable
 
  private:
   void update();
-  void handleEventWithGuard(int64_t receiveTime);
+  
 
   static const int kNoneEvent;
   static const int kReadEvent;
