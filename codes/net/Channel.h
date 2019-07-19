@@ -72,7 +72,6 @@ class Channel : noncopyable
   int        revents_;		// epoll返回的事件，即就绪的事件
   int        index_;		// channel当前在epoll上处于已添加1，还是已删除2，还是未添加-1
   bool       logHup_;		// for POLLHUP  高性能服务器编程151页上方
-
   bool eventHandling_;		// 是否处于处理事件中
   ReadEventCallback readCallback_;
   EventCallback writeCallback_;
