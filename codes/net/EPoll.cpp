@@ -100,7 +100,7 @@ void EPoll::removeChannel(Channel* channel)
   {
     update(EPOLL_CTL_DEL, channel);
   }
-
+  //调用了updateChannel和removeChannel后状态才会变为kNew
   channel->set_index(kNew);//将该channel设置成未添加
 }
 
