@@ -142,11 +142,6 @@ void Server::handleConn(int64_t receiveTime)
 }
 void Server::removeConnection(const ConnectionPtr& conn)
 {
-	loop_->runInLoop(std::bind(&Server::removeConnectionInLoop, this, conn));
-}
-
-void Server::removeConnectionInLoop(const ConnectionPtr& conn)
-{
 	loop_->assertInLoopThread();
 	//std::cout <<"removeConnectionInLoop"<< "conn: " << conn->name() << "  fd " << conn->getFd() << endl;
 	size_t n = connections_.erase(conn->name());
@@ -154,6 +149,5 @@ void Server::removeConnectionInLoop(const ConnectionPtr& conn)
 	assert(n == 1);
 	EventLoop* ioLoop = conn->getLoop();
 	// 注册的是 Connection::connectDestroyed
-	ioLoop->queueInLoop(
-		std::bind(&Connection::connectDestroyed, conn));  
+	ioLoop->queueInLoop(std::bind(&Connection::connectDestroyed, conn));  
 }
