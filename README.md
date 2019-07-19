@@ -150,7 +150,7 @@ HttpServer:
 ## 5. 连接关闭
 这部分简要说明一个连接对象关闭的过程，每个Connection对象使用shared_ptr进行管理。
 * 连接到来时，创建一个Connection对象，使用shared_ptr管理，存入unodered_map中，引用计数为1；
-* 当连接关闭时，Channel上注册的读事件就绪，会调用Channel的handleEvent执行读回调函数void Connection::handleRead(int64_t receiveTime)
+* 当连接关闭时，Channel上注册的读事件就绪，会调用Channel的handleEvent执行读回调函数<br>void Connection::handleRead(int64_t receiveTime)
 * 在handleRead中调用handleClose，handleClose中使用了shared_from_this()，引用计数加1变为2；
 * 在handleClose中调用Server::removeConnection，然后再erase，这时候引用计数变为1，然后使用bind，引用计数又加1变为2，ioLoop->queueInLoop(std::bind(&Connection::connectDestroyed, conn))；
 * handleclose调用结束，之前shared_from_this()得到的对象析构，引用计数减1变为1；
