@@ -73,8 +73,6 @@ class Channel : noncopyable
   int        index_;		// channel当前在epoll上处于已添加1，还是已删除2，还是未添加-1
   bool       logHup_;		// for POLLHUP  高性能服务器编程151页上方
 
-  weak_ptr<void> tie_;		//弱引用，指向一个shared_ptr时不会导致shared_ptr的引用计数增长
-  bool tied_;
   bool eventHandling_;		// 是否处于处理事件中
   ReadEventCallback readCallback_;
   EventCallback writeCallback_;
