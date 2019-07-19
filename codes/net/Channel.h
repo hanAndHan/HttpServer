@@ -33,7 +33,6 @@ class Channel : noncopyable
   void setErrorCallback(const EventCallback& cb)//错误的回调函数
   { errorCallback_ = cb; }
 
-  void tie(const shared_ptr<void>&);
 
   int fd() const { return fd_; }//channel对应的文件描述符
   int events() const { return events_; }//该channel的fd上注册了哪一些事件，保存在events_里面
