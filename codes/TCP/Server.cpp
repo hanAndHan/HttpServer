@@ -47,7 +47,7 @@ int ini_listenfd(const std::string& IP, const std::string& Port)
 		return -1;
 	}
 
-	// 开始监听，最大等待队列长为LISTENQ
+	// 开始监听，最大等待队列长为SOMAXCONN
 	if (listen(listen_fd, SOMAXCONN) == -1)
 	{
 		LogFatal("socket listen error");
