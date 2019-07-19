@@ -32,8 +32,7 @@ private:
 	typedef std::unordered_map<std::string, ConnectionPtr> ConnectionMap;
 	void handleConn(int64_t receiveTime);								 //监听套接字就绪对应的回调
 	void removeConnection(const ConnectionPtr& conn);
-	void removeConnectionInLoop(const ConnectionPtr& conn);
-
+	
 
 	int listenfd_;									  //监听套接字
 	int nextConnId_;
