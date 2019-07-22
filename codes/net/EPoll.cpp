@@ -31,7 +31,7 @@ EPoll::~EPoll()
 int64_t EPoll::poll(int timeoutMs, ChannelList* activeChannels)
 {
   int numEvents = ::epoll_wait(epollfd_,
-                               &*events_.begin(),//就绪事件
+                               &*events_.begin(),//就绪事件数组，传入的是数组的首地址
                                static_cast<int>(events_.size()),//最多监听文件描述符的个数
                                timeoutMs);
   if (numEvents > 0)
