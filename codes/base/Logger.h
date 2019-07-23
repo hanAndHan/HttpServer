@@ -43,12 +43,11 @@ public:
 	static void setLogFileName(const char * fileName);
 	/*测试用了多少次io操作*/
 	static int ioNumbers;
-
+	/*析构函数*/
+	~Logger();
 private:
         /*默认构造函数*/
 	Logger();
-	/*析构函数*/
-	~Logger();
 	/* 这里没有使用shared_ptr智能指针管理log类,否者由于使用的是静态变量无法析构 */
 	static Logger * myLogger;
 	/* 当前缓冲 */
