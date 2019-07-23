@@ -12,7 +12,7 @@
 * timer使用STL的multi_map实现，支持心搏时间动态变化，超时时间动态变化 
 * 使用timerfd将定时事件融入epoll系统调用，即统一事件源
 * 实现高效的多缓冲异步日志系统
-* 实现自定义buffer，支持延迟关闭连接，同时使用mmap加快文件读取速度
+* 实现应用层buffer，支持延迟关闭连接
 * 使用线程池充分利用多核CPU，并避免线程频繁创建销毁的开销
 ### 1.2 总体框架
 ![](https://github.com/hanAndHan/HttpServer/blob/master/imge/framework.png)
