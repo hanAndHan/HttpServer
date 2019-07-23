@@ -28,10 +28,6 @@
 class Logger:noncopyable
 {
 public:
-	/*默认构造函数*/
-	Logger();
-	/*析构函数*/
-	~Logger();
 	/* 得到日志类实例 */
 	static Logger * getLogger();
 	//static std::shared_ptr<Logger> setLogger(size_t bufSize);
@@ -49,6 +45,10 @@ public:
 	static int ioNumbers;
 
 private:
+        /*默认构造函数*/
+	Logger();
+	/*析构函数*/
+	~Logger();
 	/* 这里没有使用shared_ptr智能指针管理log类,否者由于使用的是静态变量无法析构 */
 	static Logger * myLogger;
 	/* 当前缓冲 */
