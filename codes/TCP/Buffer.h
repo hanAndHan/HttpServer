@@ -5,7 +5,7 @@
 #include <vector>
 #include <assert.h>
 #include <string.h>
-//        kCheapPrepend                           readerIndex_            writerIndex_
+//        kCheapPrepend                                  readerIndex_            writerIndex_
 //   |         |	prependableBytes()-kCheapPrepend 	|   readableBytes()   |   writableBytes()  |
 
 class Buffer
