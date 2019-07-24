@@ -153,7 +153,7 @@ HttpServer:
 * 当连接关闭时，Channel上注册的读事件就绪，会调用Channel的handleEvent执行读回调函数<br>void Connection::handleRead(int64_t receiveTime)。
 * 在handleRead中调用handleClose，handleClose中使用了shared_from_this()，引用计数加1变为2。
 * 在handleClose中调用Server::removeConnection，然后再erase，这时候引用计数变为1，然后使用bind，引用计数又加1变为2，ioLoop->queueInLoop(std::bind(&Connection::connectDestroyed, conn))。
-* handleclose调用结束，之前shared_from_this()得到的对象析构，引用计数减1变为1。
+* handleClose调用结束，之前shared_from_this()得到的对象析构，引用计数减1变为1。
 * handleRead调用结束。
 * connectDestroyed调用结束，引用计数减1变为0。
 * connection对象析构。
