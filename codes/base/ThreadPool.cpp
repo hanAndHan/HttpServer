@@ -76,7 +76,6 @@ void ThreadPool::run(const Task& task)//添加任务
 ThreadPool::Task ThreadPool::take()//取任务
 {
 	MutexLockGuard lock(mutex);
-	// always use a while-loop, due to spurious wakeup
 	while (queue.empty() && running)
 	{
 		cond.wait();
