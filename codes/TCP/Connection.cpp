@@ -178,7 +178,7 @@ void Connection::handleWrite()
 	}
 
 }
-//改一下，打印下日志错误**********************************
+
 void Connection::handleError()
 {
 	/* 出错后强制关闭 */
