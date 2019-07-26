@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="base\CountDownLatch.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\CurrentThread.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Logger.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Thread.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\ThreadPool.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="net\Channel.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\EPoll.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\EventLoop.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\EventLoopThread.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\EventLoopThreadPool.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="TCP\Socket.cpp">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="TCP\Buffer.cpp">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="TCP\Connection.cpp">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="TCP\Server.cpp">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="timerHeap\multimapHelp.cpp">
+      <Filter>timerHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="timerHeap\TimerHeapManager.cpp">
+      <Filter>timerHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="SeverTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="base">
+      <UniqueIdentifier>{eecd869f-ae93-4494-81e0-8f27402a2cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{4cac5ad6-f230-4f25-a96c-1f53f01c3a19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tcp">
+      <UniqueIdentifier>{93d615d0-fc75-457e-b4db-4d11a15f0773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="timerHeap">
+      <UniqueIdentifier>{8f0eca8a-8723-4dab-90da-53a70d7bbcc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Http">
+      <UniqueIdentifier>{ff48b535-5ea7-44c2-833c-4362e653ee97}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="base\Condition.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\CountDownLatch.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\CurrentThread.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Logger.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\MutexLock.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\noncopyable.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Thread.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\ThreadPool.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EPoll.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\Channel.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EventLoop.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EventLoopThread.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EventLoopThreadPool.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="base\BufferLog.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="TCP\Socket.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="TCP\Buffer.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="TCP\Connection.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="TCP\Server.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="Http\Http.h">
+      <Filter>Http</Filter>
+    </ClInclude>
+    <ClInclude Include="timerHeap\multimapHelp.h">
+      <Filter>timerHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="timerHeap\TimerHeapManager.h">
+      <Filter>timerHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="base\TimeSinceGMT.h">
+      <Filter>base</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
