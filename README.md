@@ -9,7 +9,7 @@
 ### 1.1 技术要点
 * 基于one loop per thread的思想实现主框架，同时使用一种one timer per loop的方式踢掉空闲连接
 * event loop使用epoll LT模式加非阻塞I/O实现
-* timer使用STL的multi_map实现，支持心搏时间动态变化，超时时间动态变化 
+* 利用STL的multi_map实现timer，支持心搏时间动态变化，超时时间动态变化 
 * 使用timerfd将定时事件融入epoll系统调用，即统一事件源
 * 实现高效的多缓冲异步日志系统
 * 实现应用层buffer，支持延迟关闭连接
