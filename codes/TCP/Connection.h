@@ -97,5 +97,18 @@ private:
 	int64_t overTime_;						   //超时时间间隔
 	int64_t lastReadTimeSinceGMT_;			   //上次进行读操作的时间
 	Http http;
+	
+	
+public:
+	static void *operator new(size_t size);
+	static void operator delete(void *phead);
+	static int m_iCout;        //分配计数统计，每new一次，就统计一次
+	static int m_iMallocCount; //每malloc一次，统计一次
+private:
+	Connection *next;
+	static Connection* m_FreePosi; //总是指向一块可以分配出去的内存的首地址
+	static int m_sTrunkCout;       //一次分配多少倍的该类内存
+	static MutexLock m_mutex;
+
 };
 
