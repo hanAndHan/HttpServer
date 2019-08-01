@@ -119,7 +119,7 @@ void Server::handleConn(int64_t receiveTime)
 		std::string con_name(std::string("socket_"));
 		//con_name += to_string(TimeSinceGMT().microSecondsSinceEpochOld());
 		con_name += to_string(accept_fd);
-		ConnectionPtr con(make_shared<Connection>(loop, con_name, accept_fd));						//创建一个新的连接，分配到新的loop上
+		ConnectionPtr con(new Connection(loop, con_name, accept_fd));						//创建一个新的连接，分配到新的loop上
 		connections_[con_name] = con;//保存连接
 
 		//for (auto it : connections_)
