@@ -9,6 +9,11 @@
 #include"../timerHeap/TimerHeapManager.h"
 extern const int timeslot;
 extern unordered_map<EventLoop*, TimerHeapManager*>loopToManager;
+int Connection::m_iCout = 0;
+int Connection::m_iMallocCount = 0;
+Connection *Connection::m_FreePosi = nullptr;
+int Connection::m_sTrunkCout = 50; //一次分配50倍的该类内存作为内存池子的大小
+MutexLock Connection::m_mutex;
 Connection::Connection(EventLoop* loop,const std::string& Con_name,int sockfd)
 	:sockfd_(sockfd),
 	loop_(loop),
@@ -256,4 +261,37 @@ int64_t Connection::getLastReadTimeSinceGMT()
 void Connection::setOverTime(int64_t overTime)
 {
 	overTime_ = overTime;
+}
+
+
+void *Connection::operator new(size_t size)
+{
+	MutexLockGuard lock(m_mutex);
+	Connection *tmplink;
+	if (m_FreePosi == nullptr)
+	{
+		//为空，我要申请内存，要申请一大块内存
+		size_t realsize = m_sTrunkCout * size; //申请m_sTrunkCout这么多倍的内存
+		m_FreePosi = reinterpret_cast<Connection*>(new char[realsize]); //传统new，调用的系统底层的malloc
+		tmplink = m_FreePosi;
+
+		//把分配出来的这一大块内存（5小块），彼此要链起来，供后续使用
+		for (; tmplink != &m_FreePosi[m_sTrunkCout - 1]; ++tmplink)
+		{
+			tmplink->next = tmplink + 1;
+		}
+		tmplink->next = nullptr;
+		++m_iMallocCount;
+	}
+	tmplink = m_FreePosi;
+	m_FreePosi = m_FreePosi->next;//指向下一块可分配的内存块
+	++m_iCout;
+	return tmplink;
+}
+
+void Connection::operator delete(void *phead)
+{
+	MutexLockGuard lock(m_mutex);
+	(static_cast<Connection*>(phead))->next = m_FreePosi;
+	m_FreePosi = static_cast<Connection*>(phead);
 }
