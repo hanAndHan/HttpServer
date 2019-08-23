@@ -171,8 +171,8 @@ HttpServer:
 * 分别测试短连接和长连接的情况
 * 关闭日志打印功能，关闭定时器剔除空闲连接功能
 * 为避免磁盘IO对测试结果的影响，测试响应为内存中的"HTTP/1.1 200 OK\r\nContent-type: text/plain\r\n\r\nHello World"
-* 我的服务器在实现上参考了muduo，Linya学长去年也参考muduo实现了一个WebSever:https://github.com/linyacool/WebServer
-因此我将与Linya学长的WebSever进行一个小小的对比，测试过程中关闭WebSever的所有输出及日志打印功能
+* 我的服务器在实现上参考了muduo，Linya去年也参考muduo实现了一个WebSever:https://github.com/linyacool/WebServer
+因此我将与Linya的WebSever进行一个小小的对比，测试过程中关闭WebSever的所有输出及日志打印功能
 * 线程池开启4线程
 * 因为发送的内容很少，为避免发送可能的延迟，关闭Nagle算法
 ## 6.3 测试结果及分析
