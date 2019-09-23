@@ -9,13 +9,13 @@ Thread    Logger::readThread(Logger::Threadfunc);
 std::shared_ptr<BufferLog> Logger::curBuf = nullptr;
 std::list<std::shared_ptr<BufferLog>> Logger::bufList;
 Logger *	 Logger::myLogger = nullptr;
-int			 Logger::readableNum = 0;
+int		 Logger::readableNum = 0;
 bool		 Logger::isRunningFunc = true;
 bool		 Logger::isRunningThreadFunc = true;
 bool		 Logger::startd = false;
-bool         Logger::allowLog = false;
-int		   	 Logger::ioNumbers = 0;
-int			 Logger::fd = -1;
+bool             Logger::allowLog = false;
+int		 Logger::ioNumbers = 0;
+int	         Logger::fd = -1;
 std::string  Logger::logFileName;
 TimeSinceGMT Logger::timeNow;
 
@@ -70,7 +70,7 @@ std::shared_ptr<BufferLog>& Logger::useFul()
 	return *iter;
 }
 
-/*日志级别              文件名       行号                可变参数的宏*/
+                                  /*日志级别             文件名        行号                可变参数的宏*/
 void Logger::logStream(const char* pszLevel, const char* pszFile, int lineNo, const char* pszFmt, ...)
 {
 	/*没有实例化直接退出*/
@@ -161,7 +161,7 @@ int Logger::timeFormate()
 		t_lastSecond = seconds;
 		struct tm tm_time;
 		::gmtime_r(&seconds, &tm_time); // FIXME TimeZone::fromUtcTime，可以将GMT时间和UTC时间看作等同的
-		int len = snprintf(t_time, sizeof(t_time), "%4d%02d%02d %02d:%02d:%02d",//若要使用北京时间，可将tm_time.tm_hour+8
+		int len = snprintf(t_time, sizeof(t_time), "%4d%02d%02d %02d:%02d:%02d",
 			tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
 			tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
 		assert(len == 17); (void)len;
